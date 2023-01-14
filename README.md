@@ -4,7 +4,7 @@
 
   ```
   sudo apt-get install ros-$(ros_version)-ros-control ros-$(ros_version)-ros-controllers
-  sudo apt-get install ros-noetic-hector-gazebo-*
+  sudo apt-get install ros-$(ros_version)-hector-gazebo-*
   ```
 
 - 下载编译
