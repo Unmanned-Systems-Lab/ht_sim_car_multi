@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hunter_se_with_box">
+    <xacro:include filename="$(find hunter_se_description)/urdf/hunter_se_description.xacro" />
+  <link
+    name="box_link">
+    <inertial>
+      <origin
+        xyz="-0.087983 0.019545 0.12035"
+        rpy="0 0 0" />
+      <mass
+        value="6.5899" />
+      <inertia
+        ixx="0.038097"
+        ixy="6.3863E-06"
+        ixz="0.0023813"
+        iyy="0.05534"
+        iyz="0.00081482"
+        izz="0.069781" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://hunter_se_description/meshes/box_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://hunter_se_description/meshes/box_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+    <joint name="box_jiont" type="fixed">
+        <origin xyz="0.2 0.0 0.02" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="box_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+    </joint>
+    
+</robot>

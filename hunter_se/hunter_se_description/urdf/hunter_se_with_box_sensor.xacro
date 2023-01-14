@@ -1,0 +1,506 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hunter_se_with_box">
+    <xacro:include filename="$(find hunter_se_description)/urdf/hunter_se_description.xacro" />
+
+    <xacro:arg name="robot_namespace" default="$(optenv ROBOT_NAMESPACE /)" />
+
+    <xacro:property name="tf_prefix" value="$(arg robot_namespace)/" />
+
+  <link
+    name="box_link">
+    <inertial>
+      <origin
+        xyz="-0.087983 0.019545 0.12035"
+        rpy="0 0 0" />
+      <mass
+        value="6.5899" />
+      <inertia
+        ixx="0.038097"
+        ixy="6.3863E-06"
+        ixz="0.0023813"
+        iyy="0.05534"
+        iyz="0.00081482"
+        izz="0.069781" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://hunter_se_description/meshes/box_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://hunter_se_description/meshes/box_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+    <joint name="box_jiont" type="fixed">
+        <origin xyz="0.2 0.0 0.02" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="box_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+    </joint>
+    
+  <!-- IMU Link -->
+  <xacro:arg name="imu_xyz"     default="$(optenv HUSKY_IMU_XYZ 0.19 0 0.149)"/>
+  <xacro:arg name="imu_rpy"     default="$(optenv HUSKY_IMU_RPY 0 -1.5708 3.1416)"/>
+  <xacro:arg name="imu_parent"  default="$(optenv HUSKY_IMU_PARENT base_link)"/>
+
+  <!-- LMS1XX Laser Primary and Secondary -->
+  <xacro:arg name="laser_enabled"           default="$(optenv HUSKY_LMS1XX_ENABLED 0)" />
+  <xacro:arg name="laser_topic"             default="$(optenv HUSKY_LMS1XX_TOPIC front/scan)"/>
+  <xacro:arg name="laser_tower"             default="$(optenv HUSKY_LMS1XX_TOWER 1)"/>
+  <xacro:arg name="laser_prefix"            default="$(optenv HUSKY_LMS1XX_PREFIX front)"/>
+  <xacro:arg name="laser_parent"            default="$(optenv HUSKY_LMS1XX_PARENT box_link)"/>
+  <xacro:arg name="laser_xyz"               default="$(optenv HUSKY_LMS1XX_XYZ 0.2206 0.0 0.00635)" />
+  <xacro:arg name="laser_rpy"               default="$(optenv HUSKY_LMS1XX_RPY 0.0 0.0 0.0)" />
+
+  <xacro:arg name="laser_secondary_enabled" default="$(optenv HUSKY_LMS1XX_SECONDARY_ENABLED 0)" />
+  <xacro:arg name="laser_secondary_topic"   default="$(optenv HUSKY_LMS1XX_SECONDARY_TOPIC rear/scan)"/>
+  <xacro:arg name="laser_secondary_tower"   default="$(optenv HUSKY_LMS1XX_SECONDARY_TOWER 1)"/>
+  <xacro:arg name="laser_secondary_prefix"  default="$(optenv HUSKY_LMS1XX_SECONDARY_PREFIX rear)"/>
+  <xacro:arg name="laser_secondary_parent"  default="$(optenv HUSKY_LMS1XX_SECONDARY_PARENT box_link)"/>
+  <xacro:arg name="laser_secondary_xyz"     default="$(optenv HUSKY_LMS1XX_SECONDARY_XYZ -0.2206 0.0 0.00635)" />
+  <xacro:arg name="laser_secondary_rpy"     default="$(optenv HUSKY_LMS1XX_SECONDARY_RPY 0.0 0.0 3.14159)" />
+
+  <!-- UST10 Laser Primary  and Secondary -->
+  <xacro:arg name="laser_ust10_front_enabled" default="$(optenv HUSKY_UST10_ENABLED 0)" />
+  <xacro:arg name="laser_ust10_front_topic"   default="$(optenv HUSKY_UST10_TOPIC front/scan)" />
+  <xacro:arg name="laser_ust10_front_prefix"  default="$(optenv HUSKY_UST10_PREFIX front)" />
+  <xacro:arg name="laser_ust10_front_parent"  default="$(optenv HUSKY_UST10_PARENT box_link)" />
+  <xacro:arg name="laser_ust10_front_xyz"     default="$(optenv HUSKY_UST10_XYZ 0.2206 0.0 0.00635)" />
+  <xacro:arg name="laser_ust10_front_rpy"     default="$(optenv HUSKY_UST10_RPY 0 0 0)" />
+
+  <xacro:arg name="laser_ust10_rear_enabled"  default="$(optenv HUSKY_UST10_SECONDARY_ENABLED 0)" />
+  <xacro:arg name="laser_ust10_rear_topic"    default="$(optenv HUSKY_UST10_SECONDARY_TOPIC rear/scan)" />
+  <xacro:arg name="laser_ust10_rear_prefix"   default="$(optenv HUSKY_UST10_SECONDARY_PREFIX rear)" />
+  <xacro:arg name="laser_ust10_rear_parent"   default="$(optenv HUSKY_UST10_SECONDARY_PARENT box_link)" />
+  <xacro:arg name="laser_ust10_rear_xyz"      default="$(optenv HUSKY_UST10_SECONDARY_XYZ -0.2206 0.0 0.00635)" />
+  <xacro:arg name="laser_ust10_rear_rpy"      default="$(optenv HUSKY_UST10_SECONDARY_RPY 0 0 3.14159)" />
+
+  <!-- Velodyne LiDAR Primary and Secondary -->
+  <xacro:arg name="laser_3d_enabled"              default="$(optenv HUSKY_LASER_3D_ENABLED 0)" />
+  <xacro:arg name="laser_3d_topic"                default="$(optenv HUSKY_LASER_3D_TOPIC points)"/>
+  <xacro:arg name="laser_3d_tower"                default="$(optenv HUSKY_LASER_3D_TOWER 1)"/>
+  <xacro:arg name="laser_3d_prefix"               default="$(optenv HUSKY_LASER_3D_PREFIX )"/>
+  <xacro:arg name="laser_3d_parent"               default="$(optenv HUSKY_LASER_3D_PARENT box_link)"/>
+  <xacro:arg name="laser_3d_xyz"                  default="$(optenv HUSKY_LASER_3D_XYZ 0 0 0)" />
+  <xacro:arg name="laser_3d_rpy"                  default="$(optenv HUSKY_LASER_3D_RPY 0 0 0)" />
+
+  <xacro:arg name="laser_3d_secondary_enabled"    default="$(optenv HUSKY_LASER_3D_SECONDARY_ENABLED 0)" />
+  <xacro:arg name="laser_3d_secondary_topic"      default="$(optenv HUSKY_LASER_3D_SECONDARY_TOPIC secondary_points)"/>
+  <xacro:arg name="laser_3d_secondary_tower"      default="$(optenv HUSKY_LASER_3D_SECONDARY_TOWER 1)"/>
+  <xacro:arg name="laser_3d_secondary_prefix"     default="$(optenv HUSKY_LASER_3D_SECONDARY_PREFIX secondary_)"/>
+  <xacro:arg name="laser_3d_secondary_parent"     default="$(optenv HUSKY_LASER_3D_SECONDARY_PARENT box_link)"/>
+  <xacro:arg name="laser_3d_secondary_xyz"        default="$(optenv HUSKY_LASER_3D_SECONDARY_XYZ 0 0 0)" />
+  <xacro:arg name="laser_3d_secondary_rpy"        default="$(optenv HUSKY_LASER_3D_SECONDARY_RPY 0 0 -3.14159)" />
+
+  <!-- Realsense Camera Primary and Secondary -->
+  <xacro:arg name="realsense_enabled"             default="$(optenv HUSKY_REALSENSE_ENABLED 0)" />
+  <xacro:arg name="realsense_topic"               default="$(optenv HUSKY_REALSENSE_TOPIC realsense)" />
+  <xacro:arg name="realsense_prefix"              default="$(optenv HUSKY_REALSENSE_PREFIX camera)" />
+  <xacro:arg name="realsense_parent"              default="$(optenv HUSKY_REALSENSE_PARENT box_link)" />
+  <xacro:arg name="realsense_xyz"                 default="$(optenv HUSKY_REALSENSE_XYZ -0.015 0 0.25)" />
+  <xacro:arg name="realsense_rpy"                 default="$(optenv HUSKY_REALSENSE_RPY 0 0 0)" />
+
+  <xacro:arg name="realsense_secondary_enabled"   default="$(optenv HUSKY_REALSENSE_SECONDARY_ENABLED 0)" />
+  <xacro:arg name="realsense_secondary_topic"     default="$(optenv HUSKY_REALSENSE_SECONDARY_TOPIC realsense_secondary)" />
+  <xacro:arg name="realsense_secondary_prefix"    default="$(optenv HUSKY_REALSENSE_SECONDARY_PREFIX camera_secondary)" />
+  <xacro:arg name="realsense_secondary_parent"    default="$(optenv HUSKY_REALSENSE_SECONDARY_PARENT box_link)" />
+  <xacro:arg name="realsense_secondary_xyz"       default="$(optenv HUSKY_REALSENSE_SECONDARY_XYZ 0 0 0)" />
+  <xacro:arg name="realsense_secondary_rpy"       default="$(optenv HUSKY_REALSENSE_SECONDARY_RPY 0 0 0)" />
+
+  <!-- BlackflyS Camera Primary and Secondary -->
+  <xacro:arg name="blackfly_enabled"                  default="$(optenv HUSKY_BLACKFLY 0)"/>
+  <xacro:arg name="blackfly_mount_enabled"            default="$(optenv HUSKY_BLACKFLY_MOUNT_ENABLED 1)"/>
+  <xacro:arg name="blackfly_mount_angle"              default="$(optenv HUSKY_BLACKFLY_MOUNT_ANGLE 0)"/>
+  <xacro:arg name="blackfly_prefix"                   default="$(optenv HUSKY_BLACKFLY_PREFIX blackfly)"/>
+  <xacro:arg name="blackfly_parent"                   default="$(optenv HUSKY_BLACKFLY_PARENT box_link)"/>
+  <xacro:arg name="blackfly_xyz"                      default="$(optenv HUSKY_BLACKFLY_XYZ 0 0 0)"/>
+  <xacro:arg name="blackfly_rpy"                      default="$(optenv HUSKY_BLACKFLY_RPY 0 0 0)"/>
+
+  <xacro:arg name="blackfly_secondary_enabled"        default="$(optenv HUSKY_BLACKFLY_SECONDARY 0)"/>
+  <xacro:arg name="blackfly_secondary_mount_enabled"  default="$(optenv HUSKY_BLACKFLY_SECONDARY_MOUNT_ENABLED 1)"/>
+  <xacro:arg name="blackfly_secondary_mount_angle"    default="$(optenv HUSKY_BLACKFLY_SECONDARY_MOUNT_ANGLE 0)"/>
+  <xacro:arg name="blackfly_secondary_prefix"         default="$(optenv HUSKY_BLACKFLY_SECONDARY_PREFIX blackfly_secondary)"/>
+  <xacro:arg name="blackfly_secondary_parent"         default="$(optenv HUSKY_BLACKFLY_SECONDARY_PARENT box_link)"/>
+  <xacro:arg name="blackfly_secondary_xyz"            default="$(optenv HUSKY_BLACKFLY_SECONDARY_XYZ 0 0 0)"/>
+  <xacro:arg name="blackfly_secondary_rpy"            default="$(optenv HUSKY_BLACKFLY_SECONDARY_RPY 0 0 0)"/>
+
+
+  <!-- Height of the sensor arch in mm.  Must be either 510 or 300 -->
+  <xacro:arg name="sensor_arch"         default="$(optenv HUSKY_SENSOR_ARCH 0)" />
+  <xacro:arg name="sensor_arch_height"  default="$(optenv HUSKY_SENSOR_ARCH_HEIGHT 510)" />
+  <xacro:arg name="sensor_arch_xyz"     default="$(optenv HUSKY_SENSOR_ARCH_OFFSET 0 0 0)"/>
+  <xacro:arg name="sensor_arch_rpy"     default="$(optenv HUSKY_SENSOR_ARCH_RPY 0 0 0)"/>
+
+
+
+
+<!-- realsense -->
+
+
+  <xacro:macro name="intel_realsense_mount" params="prefix topic parent_link">
+
+    <xacro:macro name="intel_realsense" params="
+               frame:=realsense          topic:=realsense
+               h_fov:=1.5184351666666667 v_fov:=1.0122901111111111
+               min_range:=0.105          max_range:=8.0
+               width:=640                height:=480
+               update_rate:=30
+               robot_namespace:=/">
+
+      <!-- this link is the origin for the camera's data -->
+      <link name="${frame}" />
+
+      <!--
+        The gazebo plugin aligns the depth data with the Z axis, with X=left and Y=up
+        ROS expects the depth data along the X axis, with Y=left and Z=up
+        This link only exists to give the gazebo plugin the correctly-oriented frame
+      -->
+      <link name="${frame}_gazebo" />
+      <joint name="${frame}_gazebo_joint" type="fixed">
+        <parent link="${frame}"/>
+        <child link="${frame}_gazebo"/>
+        <origin xyz="0.0 0 0" rpy="-1.5707963267948966 0 -1.5707963267948966"/>
+      </joint>
+
+      <gazebo reference="${frame}">
+        <turnGravityOff>true</turnGravityOff>
+        <sensor type="depth" name="${prefix}_realsense_depth">
+          <update_rate>${update_rate}</update_rate>
+          <camera>
+            <!-- 75x65 degree FOV for the depth sensor -->
+            <horizontal_fov>${h_fov}</horizontal_fov>
+            <vertical_fov>${v_fov}</vertical_fov>
+
+            <image>
+              <width>${width}</width>
+              <height>${height}</height>
+              <!-- TODO: check what format the Realsense hardware delivers and set this to match! -->
+              <format>RGB_INT8</format>
+            </image>
+            <clip>
+              <!-- give the color sensor a maximum range of 50m so that the simulation renders nicely -->
+              <near>0.01</near>
+              <far>50.0</far>
+            </clip>
+          </camera>
+          <plugin name="kinect_controller" filename="libgazebo_ros_openni_kinect.so">
+            <baseline>0.2</baseline>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>${update_rate}</updateRate>
+            <cameraName>${topic}</cameraName>
+            <imageTopicName>color/image_raw</imageTopicName>
+            <cameraInfoTopicName>color/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>depth/image_rect_raw</depthImageTopicName>
+            <depthImageInfoTopicName>depth/camera_info</depthImageInfoTopicName>
+            <pointCloudTopicName>depth/color/points</pointCloudTopicName>
+            <frameName>${tf_prefix}${frame}_gazebo</frameName>
+            <pointCloudCutoff>${min_range}</pointCloudCutoff>
+            <pointCloudCutoffMax>${max_range}</pointCloudCutoffMax>
+            <distortionK1>0.00000001</distortionK1>
+            <distortionK2>0.00000001</distortionK2>
+            <distortionK3>0.00000001</distortionK3>
+            <distortionT1>0.00000001</distortionT1>
+            <distortionT2>0.00000001</distortionT2>
+            <CxPrime>0</CxPrime>
+            <Cx>0</Cx>
+            <Cy>0</Cy>
+            <focalLength>0</focalLength>
+            <hackBaseline>0</hackBaseline>
+          </plugin>
+        </sensor>
+      </gazebo>
+    </xacro:macro>
+
+    <link name="${prefix}_realsense_lens">
+      <visual>
+        <!--
+          the model's origin is in the middle & it's rotated to lie in
+          the optical standard with X left, Y up, and Z forward
+        -->
+        <origin xyz="0.0115 0 0.0100" rpy="1.570796 0 1.570796" />
+        <geometry>
+          <!-- Origin of this mesh is the base of the bracket. -->
+          <mesh filename="package://realsense2_description/meshes/d415.stl" />
+        </geometry>
+        <material name="white" />
+      </visual>
+    </link>
+
+    <joint type="fixed" name="${prefix}_realsense_lens_joint">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${parent_link}" />
+      <child link="${prefix}_realsense_lens" />
+    </joint>
+    <joint type="fixed" name="${prefix}_realsense_joint">
+      <origin xyz="0.025 0 0" rpy="0 0 0" />
+      <parent link="${prefix}_realsense_lens" />
+      <child link="${prefix}_realsense" />
+    </joint>
+
+    <xacro:intel_realsense frame="${prefix}_realsense" topic="${topic}"/>
+  </xacro:macro>
+  <!-- Extras -->
+  <!-- <xacro:arg name="urdf_extras"     default="$(optenv HUSKY_URDF_EXTRAS empty.urdf)" /> -->
+  <!-- <xacro:arg name="cpr_urdf_extras" default="$(optenv CPR_URDF_EXTRAS empty.urdf)" /> -->
+
+  <!-- Included URDF/XACRO Files -->
+  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/hokuyo_ust10.urdf.xacro" />
+  <!-- <xacro:include filename="$(find hunter_se_description)/urdf/accessories/ht_intel_realsense.urdf.xacro"/> -->
+  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/flir_blackfly_mount.urdf.xacro"/>
+  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/sensor_arch.urdf.xacro"/>
+  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
+  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/vlp16_mount.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find hunter_se_description)/urdf/decorations.urdf.xacro" /> -->
+  <!-- <xacro:include filename="$(find hunter_se_description)/urdf/wheel.urdf.xacro" /> -->
+
+
+  <xacro:property name="M_PI" value="3.14159"/>
+
+
+   <!--
+    Add the main sensor arch if the user has specifically enabled it, or if a sensor
+    requires it for mounting
+  -->
+  <xacro:if value="$(arg sensor_arch)">
+    <xacro:sensor_arch prefix="" parent="box_link" size="$(arg sensor_arch_height)">
+      <origin xyz="$(arg sensor_arch_xyz)" rpy="$(arg sensor_arch_rpy)"/>
+    </xacro:sensor_arch>
+  </xacro:if>
+
+
+  <!--
+      IMU Link: Standard location to add an IMU (i.e. UM7 or Microstrain)
+  -->
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <origin xyz="$(arg imu_xyz)" rpy="$(arg imu_rpy)" />
+    <parent link="$(arg imu_parent)" />
+    <child link="imu_link" />
+  </joint>
+  <gazebo reference="imu_link">
+  </gazebo>
+
+  <!--
+    SICK LMS1XX Priamry and Secondary Laser Scans
+  -->
+  <xacro:if value="$(arg laser_enabled)">
+    <xacro:sick_lms1xx_mount prefix="$(arg laser_prefix)" parent="$(arg laser_parent)" topic="$(arg laser_topic)" robot_namespace="$(arg robot_namespace)" tower="$(arg laser_tower)">
+      <origin xyz="$(arg laser_xyz)" rpy="$(arg laser_rpy)"/>
+    </xacro:sick_lms1xx_mount>
+  </xacro:if>
+  <xacro:if value="$(arg laser_secondary_enabled)">
+    <xacro:sick_lms1xx_mount prefix="$(arg laser_secondary_prefix)" parent="$(arg laser_secondary_parent)" topic="$(arg laser_secondary_topic)" robot_namespace="$(arg robot_namespace)" tower="$(arg laser_secondary_tower)">
+      <origin xyz="$(arg laser_secondary_xyz)" rpy="$(arg laser_secondary_rpy)"/>
+    </xacro:sick_lms1xx_mount>
+  </xacro:if>
+
+  <!--
+    Hokuyo UST10 Primary and Secondary Laser Scans
+  -->
+  <xacro:if value="$(arg laser_ust10_front_enabled)">
+    <xacro:hokuyo_ust10_mount topic="$(arg laser_ust10_front_topic)" prefix="$(arg laser_ust10_front_prefix)" parent_link="$(arg laser_ust10_front_parent)">
+        <origin xyz="$(arg laser_ust10_front_xyz)" rpy="$(arg laser_ust10_front_rpy)" />
+      </xacro:hokuyo_ust10_mount>
+  </xacro:if>
+
+  <xacro:if value="$(arg laser_ust10_rear_enabled)">
+    <xacro:hokuyo_ust10_mount topic="$(arg laser_ust10_rear_topic)" prefix="$(arg laser_ust10_rear_prefix)" parent_link="$(arg laser_ust10_rear_parent)">
+        <origin xyz="$(arg laser_ust10_rear_xyz)" rpy="$(arg laser_ust10_rear_rpy)" />
+      </xacro:hokuyo_ust10_mount>
+  </xacro:if>
+
+  <!-- Intel Realsense Primary and Secondary -->
+  <xacro:if value="$(arg realsense_enabled)">
+    <link name="$(arg realsense_prefix)_realsense_mountpoint"/>
+    <joint name="$(arg realsense_prefix)_realsense_mountpoint_joint" type="fixed">
+      <origin xyz="$(arg realsense_xyz)" rpy="$(arg realsense_rpy)" />
+      <parent link="$(arg realsense_parent)"/>
+      <child link="$(arg realsense_prefix)_realsense_mountpoint" />
+    </joint>
+    <xacro:intel_realsense_mount prefix="$(arg realsense_prefix)" topic="$(arg realsense_topic)" parent_link="$(arg realsense_prefix)_realsense_mountpoint"/>
+  </xacro:if>
+
+  <xacro:if value="$(arg realsense_secondary_enabled)">
+    <link name="$(arg realsense_secondary_prefix)_realsense_mountpoint"/>
+    <joint name="$(arg realsense_secondary_prefix)_realsense_mountpoint_joint" type="fixed">
+      <origin xyz="$(arg realsense_secondary_xyz)" rpy="$(arg realsense_secondary_rpy)" />
+      <parent link="$(arg realsense_secondary_parent)"/>
+      <child link="$(arg realsense_secondary_prefix)_realsense_mountpoint" />
+    </joint>
+    <xacro:intel_realsense_mount prefix="$(arg realsense_secondary_prefix)" topic="$(arg realsense_secondary_topic)" parent_link="$(arg realsense_secondary_prefix)_realsense_mountpoint"/>
+  </xacro:if>
+
+  <!-- BlackflyS Camera Primary and Secondary -->
+  <xacro:if value="$(arg blackfly_enabled)">
+    <xacro:flir_blackfly_mount prefix="$(arg blackfly_prefix)"
+                                parent="$(arg blackfly_parent)"
+                                mount_enabled="$(arg blackfly_mount_enabled)"
+                                mount_angle="$(arg blackfly_mount_angle)">
+      <origin xyz="$(arg blackfly_xyz)" rpy="$(arg blackfly_rpy)"/>
+    </xacro:flir_blackfly_mount>
+  </xacro:if>
+
+  <xacro:if value="$(arg blackfly_secondary_enabled)">
+    <xacro:flir_blackfly_mount prefix="$(arg blackfly_secondary_prefix)"
+                                parent="$(arg blackfly_secondary_parent)"
+                                mount_enabled="$(arg blackfly_secondary_mount_enabled)"
+                                mount_angle="$(arg blackfly_secondary_mount_angle)">
+      <origin xyz="$(arg blackfly_secondary_xyz)" rpy="$(arg blackfly_secondary_rpy)"/>
+    </xacro:flir_blackfly_mount>
+  </xacro:if>
+
+  <!--
+    Velodyne 3D LiDAR Primary and Secondary
+  -->
+  <xacro:if value="$(arg laser_3d_enabled)">
+    <xacro:if value="$(arg laser_3d_tower)">
+      <xacro:vlp16_mount prefix="$(arg laser_3d_prefix)" parent_link="$(arg laser_3d_parent)" topic="$(arg laser_3d_topic)">
+        <origin xyz="$(arg laser_3d_xyz)" rpy="$(arg laser_3d_rpy)" />
+      </xacro:vlp16_mount>
+    </xacro:if>
+    <xacro:unless value="$(arg laser_3d_tower)">
+      <xacro:VLP-16 parent="$(arg laser_3d_parent)" topic="$(arg laser_3d_topic)" name="$(arg laser_3d_prefix)velodyne">
+        <origin xyz="$(arg laser_3d_xyz)" rpy="$(arg laser_3d_rpy)" />
+      </xacro:VLP-16>
+    </xacro:unless>
+  </xacro:if>
+
+  <xacro:if value="$(arg laser_3d_secondary_enabled)">
+    <xacro:if value="$(arg laser_3d_secondary_tower)">
+      <xacro:vlp16_mount prefix="$(arg laser_3d_secondary_prefix)" parent_link="$(arg laser_3d_secondary_parent)" topic="$(arg laser_3d_secondary_topic)">
+        <origin xyz="$(arg laser_3d_secondary_xyz)" rpy="$(arg laser_3d_secondary_rpy)" />
+      </xacro:vlp16_mount>
+    </xacro:if>
+    <xacro:unless value="$(arg laser_3d_secondary_tower)">
+      <xacro:VLP-16 parent="$(arg laser_3d_secondary_parent)" topic="$(arg laser_3d_secondary_topic)" name="$(arg laser_3d_secondary_prefix)velodyne">
+        <origin xyz="$(arg laser_3d_secondary_xyz)" rpy="$(arg laser_3d_secondary_rpy)" />
+      </xacro:VLP-16>
+    </xacro:unless>
+  </xacro:if>
+
+
+  <gazebo>
+    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
+      <robotNamespace>$(arg robot_namespace)</robotNamespace>
+      <updateRate>50.0</updateRate>
+      <bodyName>base_link</bodyName>
+      <frameId>${tf_prefix}base_link</frameId>
+      <topicName>imu/data</topicName>
+      <accelDrift>0.005 0.005 0.005</accelDrift>
+      <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
+      <rateDrift>0.005 0.005 0.005 </rateDrift>
+      <rateGaussianNoise>0.005 0.005 0.005 </rateGaussianNoise>
+      <headingDrift>0.005</headingDrift>
+      <headingGaussianNoise>0.005</headingGaussianNoise>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gps_controller" filename="libhector_gazebo_ros_gps.so">
+      <robotNamespace>$(arg robot_namespace)</robotNamespace>
+      <updateRate>40</updateRate>
+      <bodyName>base_link</bodyName>
+      <frameId>${tf_prefix}base_link</frameId>
+      <topicName>navsat/fix</topicName>
+      <velocityTopicName>navsat/vel</velocityTopicName>
+      <referenceLatitude>$(optenv GAZEBO_WORLD_LAT 49.9)</referenceLatitude>
+      <referenceLongitude>$(optenv GAZEBO_WORLD_LON 8.9)</referenceLongitude>
+      <referenceHeading>90</referenceHeading>
+      <referenceAltitude>0</referenceAltitude>
+      <drift>0.0001 0.0001 0.0001</drift>
+    </plugin>
+  </gazebo>
+
+
+  <!-- Optional custom includes. -->
+  <!-- <xacro:include filename="$(arg urdf_extras)" /> -->
+
+  <!-- Optional for Clearpath internal softwares -->
+  <!-- <xacro:include filename="$(arg cpr_urdf_extras)" /> -->
+
+
+ <!-- livox -->
+
+  <link name="laser_livox">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>  
+      <geometry>
+      <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>	
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+      <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </visual>
+    </link>
+  <joint name="laser_livox_joint" type="fixed" >
+    <origin xyz="0.46 0 0.09" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="laser_livox"/>
+  </joint>
+
+<xacro:property name="horizontal_fov" value="70.4"/>
+<xacro:property name="vertical_fov" value="70.4"/>
+<gazebo reference="laser_livox">
+      <sensor type="ray" name="${tf_prefix}laser_livox">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>10</update_rate>
+        <!-- This ray plgin is only for visualization. -->
+        <plugin name="gazebo_ros_laser_controller" filename="liblivox_laser_simulation.so">
+			<ray>
+			  <scan>
+				<horizontal>
+				<samples>100</samples>
+				<resolution>1</resolution>
+				<min_angle>${-horizontal_fov/360*M_PI}</min_angle>
+				<max_angle>${horizontal_fov/360*M_PI}</max_angle>
+				</horizontal>
+				<vertical>
+				<samples>50</samples>
+				<resolution>1</resolution>
+				<min_angle>${-vertical_fov/360*M_PI}</min_angle>
+				<max_angle>${vertical_fov/360*M_PI}</max_angle>
+				</vertical>
+			  </scan>
+			  <range>
+				<min>0.1</min>
+				<max>200</max>
+				<resolution>0.002</resolution>
+			  </range>
+			  <noise>
+				<type>gaussian</type>
+				<mean>0.0</mean>
+				<stddev>0.01</stddev>
+			  </noise>
+			</ray>
+      <visualize>false</visualize>
+		  <samples>10000</samples>
+		  <downsample>1</downsample>
+		  <csv_file_name>package://livox_laser_simulation/scan_mode/mid70.csv</csv_file_name>
+		  <ros_topic>${tf_prefix}scan</ros_topic>
+        </plugin>
+      </sensor>
+  </gazebo>
+
+
+
+</robot>
