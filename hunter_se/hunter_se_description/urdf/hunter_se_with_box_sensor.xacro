@@ -262,10 +262,7 @@
   <!-- Included URDF/XACRO Files -->
   <xacro:include filename="$(find hunter_se_description)/urdf/accessories/hokuyo_ust10.urdf.xacro" />
   <!-- <xacro:include filename="$(find hunter_se_description)/urdf/accessories/ht_intel_realsense.urdf.xacro"/> -->
-  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/flir_blackfly_mount.urdf.xacro"/>
   <xacro:include filename="$(find hunter_se_description)/urdf/accessories/sensor_arch.urdf.xacro"/>
-  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
-  <xacro:include filename="$(find hunter_se_description)/urdf/accessories/vlp16_mount.urdf.xacro"/>
   <!-- <xacro:include filename="$(find hunter_se_description)/urdf/decorations.urdf.xacro" /> -->
   <!-- <xacro:include filename="$(find hunter_se_description)/urdf/wheel.urdf.xacro" /> -->
 
