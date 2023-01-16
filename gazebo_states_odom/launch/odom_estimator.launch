@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <node pkg="gazebo_states_odom" type="gazebo_odom_node" name="gazebo_odom_node" output="screen" />
+
+</launch>

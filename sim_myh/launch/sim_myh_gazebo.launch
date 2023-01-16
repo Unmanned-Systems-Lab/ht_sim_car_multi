@@ -5,7 +5,7 @@
         <!-- <arg name="world_name" value="$(find hunter_se_gazebo)/world/house.world"/>  -->
         <!-- <arg name="world_name" value="/home/ht/world/blender/task6_car.world"/>  -->
         <!-- <arg name="world_name" value="/home/ht/world/ele_map/ele_map6_norobot.world"/>  -->
-        <arg name="world_name" value="/home/ht/ht_code/WS/ht_hunter_se_myh_sim_ws/src/sim_myh/world/myh_1.world"/> 
+        <arg name="world_name" value="/home/ht/ht_code/WS/ht_hunter_se_myh_sim_ws/src/sim_myh/world/myh_tc1.world"/> 
         <arg name="gui" default="true"/>
 
   </include>

@@ -14,6 +14,7 @@
 
 
  <group ns = "car1">
+  <param name="car_name" value="car1" />
   <arg name="x" default="0"/>
   <arg name="y" default="0"/>
   <arg name="z" default="0.4"/>
@@ -46,7 +47,7 @@
 
   <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
   <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_nosensor.xacro' robot_namespace:=car1" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car1" />
   <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
   <!-- push robot_description to factory and spawn robot in gazebo -->
     <!-- Launch the robot state publisher -->
@@ -54,13 +55,19 @@
           <param name="publish_frequency" value="50.0"/>
           <param name="tf_prefix" value="car1" />
       </node>
-  <node name="hunter_spawn1" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car1 -x $(arg x) -y $(arg y) -z $(arg z)
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car1 -x $(arg x) -y $(arg y) -z $(arg z)
               -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
     respawn="false" />
+  
+
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+		</node>
+
 </group>
 
 
  <group ns = "car2">
+ <param name="car_name" value="car2" />
   <arg name="car2_x" default="3"/>
   <arg name="car2_y" default="0"/>
   <arg name="car2_z" default="0.4"/>
@@ -84,7 +91,7 @@
 
   <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
   <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_nosensor.xacro' robot_namespace:=car2" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car2" />
   <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
   <!-- push robot_description to factory and spawn robot in gazebo -->
     <!-- Launch the robot state publisher -->
@@ -92,12 +99,17 @@
           <param name="publish_frequency" value="50.0"/>
           <param name="tf_prefix" value="car2" />
       </node>
-  <node name="hunter_spawn2" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car2 -x $(arg car2_x) -y $(arg car2_y) -z $(arg car2_z)
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car2 -x $(arg car2_x) -y $(arg car2_y) -z $(arg car2_z)
               -R $(arg car2_roll) -P $(arg car2_pitch) -Y $(arg car2_yaw)"
     respawn="false" />
+
+    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+		</node>
+
 </group>
 
 <group ns = "car3">
+<param name="car_name" value="car3" />
   <arg name="car3_x" default="-2"/>
   <arg name="car3_y" default="0"/>
   <arg name="car3_z" default="0.36"/>
@@ -121,7 +133,7 @@
 
   <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
   <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_nosensor.xacro' robot_namespace:=car3" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car3" />
   <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
   <!-- push robot_description to factory and spawn robot in gazebo -->
     <!-- Launch the robot state publisher -->
@@ -129,12 +141,17 @@
           <param name="publish_frequency" value="50.0"/>
           <param name="tf_prefix" value="car3" />
       </node>
-  <node name="hunter_spawn3" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car3 -x $(arg car3_x) -y $(arg car3_y) -z $(arg car3_z)
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car3 -x $(arg car3_x) -y $(arg car3_y) -z $(arg car3_z)
               -R $(arg car3_roll) -P $(arg car3_pitch) -Y $(arg car3_yaw)"
     respawn="false" />
+
+      <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+		</node>
+
 </group>
 
 <group ns = "car4">
+  <param name="car_name" value="car4" />
   <arg name="car4_x" default="0"/>
   <arg name="car4_y" default="3"/>
   <arg name="car4_z" default="0.36"/>
@@ -158,7 +175,7 @@
 
   <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
   <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_nosensor.xacro' robot_namespace:=car4" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car4" />
   <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
   <!-- push robot_description to factory and spawn robot in gazebo -->
     <!-- Launch the robot state publisher -->
@@ -166,12 +183,17 @@
           <param name="publish_frequency" value="50.0"/>
           <param name="tf_prefix" value="car4" />
       </node>
-  <node name="hunter_spawn4" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car4 -x $(arg car4_x) -y $(arg car4_y) -z $(arg car4_z)
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car4 -x $(arg car4_x) -y $(arg car4_y) -z $(arg car4_z)
               -R $(arg car4_roll) -P $(arg car4_pitch) -Y $(arg car4_yaw)"
     respawn="false" />
+
+    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+		</node>
+
 </group>
 
 <group ns = "car5">
+  <param name="car_name" value="car5" />
   <arg name="car5_x" default="0"/>
   <arg name="car5_y" default="-3"/>
   <arg name="car5_z" default="0.36"/>
@@ -196,7 +218,7 @@
 
   <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
   <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_nosensor.xacro' robot_namespace:=car5" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car5" />
   <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
   <!-- push robot_description to factory and spawn robot in gazebo -->
     <!-- Launch the robot state publisher -->
@@ -204,17 +226,22 @@
           <param name="publish_frequency" value="50.0"/>
           <param name="tf_prefix" value="car5" />
       </node>
-  <node name="hunter_spawn5" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car5 -x $(arg car5_x) -y $(arg car5_y) -z $(arg car5_z)
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car5 -x $(arg car5_x) -y $(arg car5_y) -z $(arg car5_z)
               -R $(arg car5_roll) -P $(arg car5_pitch) -Y $(arg car5_yaw)"
     respawn="false" />
+
+
+      <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+		</node>
+
 </group>
 
 
-  <node pkg="tf" type="static_transform_publisher" name="world_to_global_1" args="0 0 0 0 0 0 world /car1/ackermann_steering_controller/odom 50" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="world_to_global_1" args="0 0 0 0 0 0 world /car1/ackermann_steering_controller/odom 50" />
   <node pkg="tf" type="static_transform_publisher" name="world_to_global_2" args="0 0 0 0 0 0 world /car2/ackermann_steering_controller/odom 50" />
   <node pkg="tf" type="static_transform_publisher" name="world_to_global_3" args="0 0 0 0 0 0 world /car3/ackermann_steering_controller/odom 50" />
   <node pkg="tf" type="static_transform_publisher" name="world_to_global_4" args="0 0 0 0 0 0 world /car4/ackermann_steering_controller/odom 50" />
-  <node pkg="tf" type="static_transform_publisher" name="world_to_global_5" args="0 0 0 0 0 0 world /car5/ackermann_steering_controller/odom 50" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_global_5" args="0 0 0 0 0 0 world /car5/ackermann_steering_controller/odom 50" /> -->
 
 
 </launch>

@@ -29,6 +29,14 @@
 
 ![](sim_myh.assets/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-14%20131501-16736733311963.png)
 
+- 加入了从gazebo中读取的无人车的位置信息，以/car/odom_gazebo话题发布
+
+  ```
+  roslaunch hunter_se_gazebo hunter_se_empty_world_sensor_gazebo_odom.launch
+  ```
+
+  /car/odom_gazebo以gazebo的中心坐标系为参考
+
 ## 多车 无传感器仿真
 
 > 有里程计话题，但是没有固态激光雷达 gps等传感器发布
@@ -41,6 +49,16 @@
 
 ![](sim_myh.assets/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-14%20125933-16736724115222.png)
 
+- 加入了从gazebo中读取的无人车的位置信息，以/car/odom_gazebo话题发布
+
+  ```
+  roslaunch sim_myh new_sim_car_sum_5_gazebo_odom.launch 
+  ```
+
+  /car/odom_gazebo以gazebo的中心坐标系为参考
+
+
+
 
 
 ## 多车 有传感器仿真
@@ -52,3 +70,13 @@
 **演示效果：**
 
 ![](sim_myh.assets/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202023-01-14%20125154-16736720366621.png)
+
+
+
+- 加入了从gazebo中读取的无人车的位置信息，以/car/odom_gazebo话题发布
+
+  ```
+  roslaunch sim_myh new_sim_car_sum_5_sensor_gazebo_odom.launch 
+  ```
+
+  /car/odom_gazebo以gazebo的中心坐标系为参考
