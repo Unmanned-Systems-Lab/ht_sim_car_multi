@@ -52,7 +52,7 @@
   <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car1 -x $(arg x) -y $(arg y) -z $(arg z)
               -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
     respawn="false" />
-    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel.py" output="screen">
 		</node>
     <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
 		</node>
