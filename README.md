@@ -136,6 +136,10 @@
 
 [![video](https://bb-embed.herokuapp.com/embed?v=BV1xy4y197xG )]( https://www.bilibili.com/video/BV1xy4y197xG/?vd_source=c81e9e4a6abdaa49045ee8304823fb81 )
 
+- 发布话题/obstacle 
+
+  - 信息类型 visualization_msgs/MarkerArray
+
 - 命令
 
   - 单车-静态障碍物
