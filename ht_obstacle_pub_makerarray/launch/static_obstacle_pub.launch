@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="ht_obstacle_pub_makerarray" name="static_obstacle_pub" type="static_obstacle_pub.py" output="screen">
+		</node>
+
+  </launch>
+
+

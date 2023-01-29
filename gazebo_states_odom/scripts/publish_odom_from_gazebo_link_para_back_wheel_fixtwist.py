@@ -9,7 +9,7 @@ import rospy
 
 rospy.init_node('publish_odom_from_gazebo',anonymous=True)
 car_name = rospy.get_param('car_name')
-#car_name = 'car1'
+# car_name = 'car1'
 topic_name = '/' + car_name + '/' + 'odom_gazebo_back_wheel'
 ref_frame_id = "gazebo_world"
 # root_relative_entity_name = '' # this is the full model and not only the base_link

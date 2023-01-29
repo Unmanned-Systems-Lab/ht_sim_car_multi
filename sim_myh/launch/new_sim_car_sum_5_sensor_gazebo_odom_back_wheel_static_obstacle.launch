@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<launch>
+
+<param name="use_sim_time" value="false"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <!-- <arg name="world_name" value="$(find hunter_se_gazebo)/world/house.world"/>  -->
+        <!-- <arg name="world_name" value="/home/ht/world/blender/task6_car.world"/>  -->
+        <!-- <arg name="world_name" value="/home/ht/world/ele_map/ele_map6_norobot.world"/>  -->
+        <arg name="world_name" value="$(find sim_myh)/world/myh_tc1.world"/>  
+        <arg name="gui" default="true"/>
+
+  </include>
+
+
+ <group ns = "car1">
+  <param name="car_name" value="car1" />
+  <arg name="x" default="0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0.4"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="0"/>
+
+
+  <!-- Load controller parameters -->
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_ackermann_steering_controller_car1.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_gains.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_joint_state_publisher.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" />
+
+  <!-- Spawn the controllers -->
+  <node pkg="controller_manager" type="spawner" name="controller_spawner"
+      args="joint_state_publisher ackermann_steering_controller"  output="screen" respawn="false" />
+  
+
+
+      <!-- Launch a rqt steering GUI for publishing to /steer_bot/steer_drive_controller/cmd_vel -->
+      <node pkg="rqt_robot_steering" type="rqt_robot_steering" name="rqt_robot_steering" >
+      <param name="default_topic" value="ackermann_steering_controller/cmd_vel"/>                         <!-- default velocity control topic name -->
+      <param name="default_vx_max" value="1.0"/>                        <!-- linear velocity max value    m/s -->
+      <param name="default_vx_min" value="-1.0"/>                       <!-- linear velocity min value    m/s-->
+      <param name="default_vw_max" value="0.69"/>                    <!-- angular velocity max value  rad/s (adaptor for urdf joint limit) -->
+      <param name="default_vw_min" value="-0.69"/>                   <!-- angular velocity min value  rad/s (adaptor for urdf joint limit) -->
+      </node>
+  
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car1" />
+  <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+    <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+          <param name="publish_frequency" value="50.0"/>
+          <param name="tf_prefix" value="car1" />
+      </node>
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car1 -x $(arg x) -y $(arg y) -z $(arg z)
+              -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"
+    respawn="false" />
+  
+
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+		</node>
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+  </node>
+
+</group>
+
+
+ <group ns = "car2">
+ <param name="car_name" value="car2" />
+  <arg name="car2_x" default="3"/>
+  <arg name="car2_y" default="0"/>
+  <arg name="car2_z" default="0.4"/>
+  <arg name="car2_roll" default="0"/>
+  <arg name="car2_pitch" default="0"/>
+  <arg name="car2_yaw" default="0"/>
+
+
+  <!-- Load controller parameters -->
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_ackermann_steering_controller_car2.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_gains.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_joint_state_publisher.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" />
+
+  <!-- Spawn the controllers -->
+  <node pkg="controller_manager" type="spawner" name="controller_spawner"
+      args="joint_state_publisher ackermann_steering_controller"  output="screen" respawn="false" />
+  
+
+
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car2" />
+  <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+    <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+          <param name="publish_frequency" value="50.0"/>
+          <param name="tf_prefix" value="car2" />
+      </node>
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car2 -x $(arg car2_x) -y $(arg car2_y) -z $(arg car2_z)
+              -R $(arg car2_roll) -P $(arg car2_pitch) -Y $(arg car2_yaw)"
+    respawn="false" />
+
+    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+		</node>
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+  </node>
+
+</group>
+
+<group ns = "car3">
+<param name="car_name" value="car3" />
+  <arg name="car3_x" default="-2"/>
+  <arg name="car3_y" default="0"/>
+  <arg name="car3_z" default="0.36"/>
+  <arg name="car3_roll" default="0"/>
+  <arg name="car3_pitch" default="0"/>
+  <arg name="car3_yaw" default="0"/>
+
+
+  <!-- Load controller parameters -->
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_ackermann_steering_controller_car3.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_gains.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_joint_state_publisher.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" />
+
+  <!-- Spawn the controllers -->
+  <node pkg="controller_manager" type="spawner" name="controller_spawner"
+      args="joint_state_publisher ackermann_steering_controller"  output="screen" respawn="false" />
+  
+
+
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car3" />
+  <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+    <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+          <param name="publish_frequency" value="50.0"/>
+          <param name="tf_prefix" value="car3" />
+      </node>
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car3 -x $(arg car3_x) -y $(arg car3_y) -z $(arg car3_z)
+              -R $(arg car3_roll) -P $(arg car3_pitch) -Y $(arg car3_yaw)"
+    respawn="false" />
+
+      <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+		</node>
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+  </node>
+
+</group>
+
+<group ns = "car4">
+  <param name="car_name" value="car4" />
+  <arg name="car4_x" default="0"/>
+  <arg name="car4_y" default="3"/>
+  <arg name="car4_z" default="0.36"/>
+  <arg name="car4_roll" default="0"/>
+  <arg name="car4_pitch" default="0"/>
+  <arg name="car4_yaw" default="0"/>
+
+
+  <!-- Load controller parameters -->
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_ackermann_steering_controller_car4.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_gains.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_joint_state_publisher.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" />
+
+  <!-- Spawn the controllers -->
+  <node pkg="controller_manager" type="spawner" name="controller_spawner"
+      args="joint_state_publisher ackermann_steering_controller"  output="screen" respawn="false" />
+  
+
+
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car4" />
+  <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+    <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+          <param name="publish_frequency" value="50.0"/>
+          <param name="tf_prefix" value="car4" />
+      </node>
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car4 -x $(arg car4_x) -y $(arg car4_y) -z $(arg car4_z)
+              -R $(arg car4_roll) -P $(arg car4_pitch) -Y $(arg car4_yaw)"
+    respawn="false" />
+
+    <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+		</node>
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+  </node>
+
+</group>
+
+<group ns = "car5">
+  <param name="car_name" value="car5" />
+  <arg name="car5_x" default="0"/>
+  <arg name="car5_y" default="-3"/>
+  <arg name="car5_z" default="0.36"/>
+  <arg name="car5_roll" default="0"/>
+  <arg name="car5_pitch" default="0"/>
+  <arg name="car5_yaw" default="0"/>
+
+
+  <!-- Load controller parameters -->
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_ackermann_steering_controller_car5.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_gains.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_joint_state_publisher.yaml" />
+  <rosparam command="load" file="$(find hunter_se_control)/config/ctrl_steer_bot_hardware_gazebo.yaml" />
+
+  <!-- Spawn the controllers -->
+  <node pkg="controller_manager" type="spawner" name="controller_spawner"
+      args="joint_state_publisher ackermann_steering_controller"  output="screen" respawn="false" />
+  
+
+
+  
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <!-- <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_gazebo)/xacro/hunter_se_base.xacro'" /> -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find hunter_se_description)/urdf/hunter_se_with_box_sensor.xacro' robot_namespace:=car5" />
+  <!-- <param name="robot_description" command="cat $(find hunter_se_base)/urdf/hunter_se_base.urdf"/> -->
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+    <!-- Launch the robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+          <param name="publish_frequency" value="50.0"/>
+          <param name="tf_prefix" value="car5" />
+      </node>
+  <node name="hunter_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model car5 -x $(arg car5_x) -y $(arg car5_y) -z $(arg car5_z)
+              -R $(arg car5_roll) -P $(arg car5_pitch) -Y $(arg car5_yaw)"
+    respawn="false" />
+
+
+      <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para_back_wheel" type="publish_odom_from_gazebo_link_para_back_wheel_fixtwist.py" output="screen">
+		</node>
+  <node pkg="gazebo_states_odom" name="publish_odom_from_gazebo_para" type="publish_odom_from_gazebo_link_para.py" output="screen">
+  </node>
+
+</group>
+
+  <node pkg="ht_obstacle_pub_makerarray" name="static_obstacle_pub" type="static_obstacle_pub.py" output="screen">
+		</node>
+
+  <!-- <node pkg="tf" type="static_transform_publisher" name="world_to_global_1" args="0 0 0 0 0 0 world /car1/ackermann_steering_controller/odom 50" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_global_2" args="0 0 0 0 0 0 world /car2/ackermann_steering_controller/odom 50" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_global_3" args="0 0 0 0 0 0 world /car3/ackermann_steering_controller/odom 50" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_global_4" args="0 0 0 0 0 0 world /car4/ackermann_steering_controller/odom 50" />
+  <node pkg="tf" type="static_transform_publisher" name="world_to_global_5" args="0 0 0 0 0 0 world /car5/ackermann_steering_controller/odom 50" /> -->
+
+
+</launch>
+
